@@ -57,7 +57,7 @@ class MessagingViewController: UIViewController {
         
         LPMessagingSDK.instance.delegate = self
         self.setSDKConfigurations()
-        LPInfraFacade.setLoggingLevel(level: .INFO)
+        // LPInfraFacade.setLoggingLevel(level: .INFO)
     }
 
     //MARK: - IBActions
@@ -190,7 +190,7 @@ extension MessagingViewController {
         let conversationQuery = LPMessagingSDK.instance.getConversationBrandQuery(accountNumber)
         
         //LPConversationHistoryControlParam
-        let controlParam = LPConversationHistoryControlParam(historyConversationsStateToDisplay: .all,
+        let controlParam = LPConversationHistoryControlParam(// historyConversationsStateToDisplay: .all,
                                                              historyConversationsMaxDays: -1,
                                                              historyMaxDaysType: .startConversationDate)
 
