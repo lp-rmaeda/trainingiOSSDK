@@ -29,10 +29,10 @@ class MonitoringViewController: UIViewController {
         super.viewDidLoad()
         
         // Enter Your Account Number
-        self.accountTextField.text = nil
+        self.accountTextField.text = "33188187"
         
         // Enter Your App Install Identifier
-        self.appInstallIdentifierTextField.text = nil
+        self.appInstallIdentifierTextField.text = "5aa277d4-ea08-445b-b610-4183d05f22f8"
     }
 
     // MARK: - IBActions
@@ -53,10 +53,12 @@ class MonitoringViewController: UIViewController {
     }
     
     @IBAction func getEngagementClicked(_ sender: Any) {
-        let entryPoints = ["tel://972737004000",
+        let entryPoints = ["ios"]
+    /*    let entryPoints = ["tel://972737004000",
                            "http://www.liveperson.com",
                            "sec://Sport",
                            "lang://Eng"]
+    */
         
         let engagementAttributes = [
             ["type": "purchase", "total": 20.0],
