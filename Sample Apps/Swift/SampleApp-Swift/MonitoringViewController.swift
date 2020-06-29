@@ -24,7 +24,8 @@ class MonitoringViewController: UIViewController {
     private var campaignInfo: LPCampaignInfo?
     
     // Enter Your Consumer Identifier
-    private let consumerID: String? = nil
+    private let consumerID: String? = "auth0|5d91bbac326dfe0dd96246e8"
+    private let issuer: String? = "https://rmaeda.au.auth0.com/"
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -115,6 +116,7 @@ class MonitoringViewController: UIViewController {
 
         Auth0
             .webAuth()
+            .responseType([.code])
             .scope("openid profile email")
             .audience("https://rmaeda.au.auth0.com/userinfo")
             .start {
@@ -125,8 +127,9 @@ class MonitoringViewController: UIViewController {
                     print("Credentials: \(credentials)")
                     let authenticationParams = LPAuthenticationParams(authenticationCode: credentials.accessToken, redirectURI: redirectURI, authenticationType: .authenticated)
 
-                    LPMessagingSDK.instance.showConversation(conversationViewParam, authenticationParams: authenticationParams)
-
+                    DispatchQueue.main.async {
+                        LPMessagingSDK.instance.showConversation(conversationViewParam, authenticationParams: authenticationParams)
+                    }
                 }
         }
         
@@ -170,7 +173,7 @@ extension MonitoringViewController {
         self.campaignInfo = nil
         
         let monitoringParams = LPMonitoringParams(entryPoints: entryPoints, engagementAttributes: engagementAttributes)
-        let identity = LPMonitoringIdentity(consumerID: consumerID, issuer: nil)
+        let identity = LPMonitoringIdentity(consumerID: consumerID, issuer: issuer)
         LPMonitoringAPI.instance.getEngagement(identities: [identity], monitoringParams: monitoringParams, completion: { [weak self] (getEngagementResponse) in
             print("received get engagement response with pageID: \(String(describing: getEngagementResponse.pageId)), campaignID: \(String(describing: getEngagementResponse.engagementDetails?.first?.campaignId)), engagementID: \(String(describing: getEngagementResponse.engagementDetails?.first?.engagementId))")
             // Save PageId for future reference
