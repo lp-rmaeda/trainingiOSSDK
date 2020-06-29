@@ -1,7 +1,10 @@
 source 'https://github.com/LivePersonInc/iOSPodSpecs.git'
+source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '11.0'
 use_frameworks!
 
 target 'SampleApp' do  
+   pod 'Auth0', '~> 1.26'
    pod 'LPMessagingSDK'
 end
+

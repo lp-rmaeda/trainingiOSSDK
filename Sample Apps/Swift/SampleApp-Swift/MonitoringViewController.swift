@@ -11,6 +11,8 @@ import LPMessagingSDK
 import LPInfra
 import LPMonitoring
 
+import Auth0
+
 class MonitoringViewController: UIViewController {
     
     //MARK: - UI Properties
@@ -97,12 +99,39 @@ class MonitoringViewController: UIViewController {
             return
         }
         
+        /*
         guard let campaignInfo = self.campaignInfo  else {
             print("Can't show conversation without valid campaignInfo")
             return
         }
 
-        showConversationWith(accountNumber: accountNumber, campaignInfo: campaignInfo)
+        campaignInfo.campaignId = 1122915870
+        campaignInfo.engagementId = 1122930970
+         */
+        
+        let redirectURI = "https://rmaeda.au.auth0.com/authorize"
+        let conversationQuery = LPMessagingSDK.instance.getConversationBrandQuery(accountNumber)
+        let conversationViewParam = LPConversationViewParams(conversationQuery: conversationQuery, isViewOnly: false)
+
+        Auth0
+            .webAuth()
+            .scope("openid profile email")
+            .audience("https://rmaeda.au.auth0.com/userinfo")
+            .start {
+                switch $0 {
+                case .failure(let error):
+                    print ("Error: \(error)")
+                case .success(let credentials):
+                    print("Credentials: \(credentials)")
+                    let authenticationParams = LPAuthenticationParams(authenticationCode: credentials.accessToken, redirectURI: redirectURI, authenticationType: .authenticated)
+
+                    LPMessagingSDK.instance.showConversation(conversationViewParam, authenticationParams: authenticationParams)
+
+                }
+        }
+        
+        // showConversationWith(accountNumber: accountNumber, campaignInfo: campaignInfo)
+
     }
     
     @IBAction func logoutClicked(_ sender: Any) {
