@@ -1,0 +1,7 @@
+source 'https://github.com/LivePersonInc/iOSPodSpecs.git'
+platform :ios, '11.0'
+use_frameworks!
+
+target 'SampleApp' do  
+   pod 'LPMessagingSDK'
+end
