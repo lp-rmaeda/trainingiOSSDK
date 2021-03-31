@@ -9,6 +9,8 @@
 import UIKit
 import LPMessagingSDK
 
+import Auth0
+
 class MonitoringViewController: UIViewController {
     
     //MARK: - UI Properties
@@ -20,17 +22,18 @@ class MonitoringViewController: UIViewController {
     private var campaignInfo: LPCampaignInfo?
     
     // Enter Your Consumer Identifier
-    private let consumerID: String? = nil
+    private let consumerID: String? = "auth0|5d91bbac326dfe0dd96246e8"
+    private let issuer: String? = "https://rmaeda.au.auth0.com/"
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Enter Your Account Number
-        self.accountTextField.text = nil
+        self.accountTextField.text = "87301551"
         
         // Enter Your App Install Identifier
-        self.appInstallIdentifierTextField.text = nil
+        self.appInstallIdentifierTextField.text = "b1026930-2fa4-4516-a5b7-e0c8df3edf8d"
     }
 
     // MARK: - IBActions
@@ -42,6 +45,8 @@ class MonitoringViewController: UIViewController {
             return
         }
         
+        self.campaignInfo = LPCampaignInfo (campaignId: 1122915870, engagementId: 1122930970, contextId: nil)
+        
         guard let appInstallID = self.appInstallIdentifierTextField.text, !appInstallID.isEmpty  else {
             print("missing app install Identifier")
             return
@@ -51,10 +56,13 @@ class MonitoringViewController: UIViewController {
     }
     
     @IBAction func getEngagementClicked(_ sender: Any) {
+        let entryPoints = ["ios"]
+        /*
         let entryPoints = ["tel://972737004000",
                            "http://www.liveperson.com",
                            "sec://Sport",
                            "lang://Eng"]
+         */
         
         let engagementAttributes = [
             ["type": "purchase", "total": 20.0],
@@ -93,12 +101,42 @@ class MonitoringViewController: UIViewController {
             return
         }
         
+
         guard let campaignInfo = self.campaignInfo  else {
             print("Can't show conversation without valid campaignInfo")
             return
         }
+        
+        // let redirectURI = "https://rmaeda.au.auth0.com/authorize"
+        let redirectURI = "https://rmaeda.au.auth0.com/oauth/token"
+        let conversationQuery = LPMessaging.instance.getConversationBrandQuery(accountNumber, campaignInfo: campaignInfo)
+        let conversationViewParam = LPConversationViewParams(conversationQuery: conversationQuery, isViewOnly: false)
+        
+        Auth0
+            .webAuth(clientId: "H1lgb5JC5pLuqTjNLY5U5P3duMiFul0I", domain: "rmaeda.au.auth0.com")
+            .nonce("hoge")
+            .audience("https://rmaeda.au.auth0.com/userinfo")
+            .responseType([.idToken])
+            .scope("openid profile")
+            .start {
+                switch $0 {
+                case .failure(let error):
+                    print ("Error: \(error)")
+                case .success(let credentials):
+                    print("Credentials: \(credentials)")
+                    let authenticationParams = LPAuthenticationParams(authenticationCode: nil,
+                                                                      jwt: credentials.idToken,
+                                                                      redirectURI: redirectURI,
+                                                                      certPinningPublicKeys: nil,
+                                                                      authenticationType: .authenticated)
 
-        showConversationWith(accountNumber: accountNumber, campaignInfo: campaignInfo)
+                    DispatchQueue.main.async {
+                        LPMessaging.instance.showConversation(conversationViewParam, authenticationParams: authenticationParams)
+                    }
+                }
+        }
+
+        // showConversationWith(accountNumber: accountNumber, campaignInfo: campaignInfo)
     }
     
     @IBAction func logoutClicked(_ sender: Any) {
@@ -134,8 +172,9 @@ extension MonitoringViewController {
     private func getEngagement(entryPoints: [String], engagementAttributes: [[String:Any]]) {
         //resetting pageId and campaignInfo
         self.pageId = nil
-        self.campaignInfo = nil
-        
+        // self.campaignInfo = nil
+        self.campaignInfo = LPCampaignInfo (campaignId: 1122915870, engagementId: 1122930970, contextId: nil)
+
         let monitoringParams = LPMonitoringParams(entryPoints: entryPoints, engagementAttributes: engagementAttributes)
         let identity = LPMonitoringIdentity(consumerID: consumerID, issuer: nil)
         LPMessaging.instance.getEngagement(identities: [identity], monitoringParams: monitoringParams, completion: { [weak self] (getEngagementResponse) in
