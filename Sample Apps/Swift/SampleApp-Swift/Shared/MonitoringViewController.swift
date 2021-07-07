@@ -27,10 +27,10 @@ class MonitoringViewController: UIViewController {
         super.viewDidLoad()
         
         // Enter Your Account Number
-        self.accountTextField.text = nil
+        self.accountTextField.text = "30320752"
         
         // Enter Your App Install Identifier
-        self.appInstallIdentifierTextField.text = nil
+        self.appInstallIdentifierTextField.text = "7ae43616-ffa2-4088-b62c-5c4f2d6e7fef"
     }
 
     // MARK: - IBActions
@@ -51,10 +51,8 @@ class MonitoringViewController: UIViewController {
     }
     
     @IBAction func getEngagementClicked(_ sender: Any) {
-        let entryPoints = ["tel://972737004000",
-                           "http://www.liveperson.com",
-                           "sec://Sport",
-                           "lang://Eng"]
+        let entryPoints = ["ios"]
+                           
         
         let engagementAttributes = [
             ["type": "purchase", "total": 20.0],
@@ -68,9 +66,7 @@ class MonitoringViewController: UIViewController {
     }
     
     @IBAction func sendSDEClicked(_ sender: Any) {
-        let entryPoints = ["http://www.liveperson-test.com",
-                           "sec://Food",
-                           "lang://De"]
+        let entryPoints = ["ios"]
         
         let engagementAttributes = [
             ["type": "purchase",
@@ -93,10 +89,7 @@ class MonitoringViewController: UIViewController {
             return
         }
         
-        guard let campaignInfo = self.campaignInfo  else {
-            print("Can't show conversation without valid campaignInfo")
-            return
-        }
+        let campaignInfo = LPCampaignInfo (campaignId: 1379268070, engagementId: 1379268470, contextId: nil)
 
         showConversationWith(accountNumber: accountNumber, campaignInfo: campaignInfo)
     }

@@ -50,7 +50,7 @@ class MessagingViewController: UIViewController {
         super.viewDidLoad()
         
         // Enter Your Account Number
-        self.accountTextField.text = "ENTER_ACCOUNT_NUMBER"
+        self.accountTextField.text = "30320752"
         
         self.windowSwitch.isOn = windowSwitchValue
         self.authenticationSwitch.isOn = authenticationSwitchValue
