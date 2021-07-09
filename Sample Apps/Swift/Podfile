@@ -1,11 +1,10 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '11.0'
-use_frameworks!
+platform :ios, '11.0'
 source 'https://github.com/LivePersonInc/iOSPodSpecs.git' #LiveEngage Pod Repository
+use_frameworks!
 
 target 'SampleApp' do
-
   # Pods for SampleApp
   #LPMessagingSDK Includes: LPAMS.framework, LPInfra.framework, LPMessagingSDK.framework and  LPMessagingSDKModels.bundle
-  pod 'LPMessagingSDK'
+  pod 'LPMessagingSDK', '~> 6.4.1.781'
 end
